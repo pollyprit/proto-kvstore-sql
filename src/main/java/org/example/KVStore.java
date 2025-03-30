@@ -83,7 +83,9 @@ public class KVStore {
         Connection connection = dbConnectionPool.getConnection();
 
         try {
-            String query = "UPDATE kvstore SET expiry = null where expiry > now()";
+            String query = "UPDATE kvstore SET expiry = null" +
+                    " WHERE key=" + key + " and expiry > now()";
+
             Statement statement = connection.createStatement();
             statement.executeUpdate(query);
         }
