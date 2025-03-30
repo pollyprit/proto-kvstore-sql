@@ -20,10 +20,14 @@ public class KVStore {
     private static final String DB_PASS = "postgres";
     private static int POOL_SIZE = 20;
     private DBConnectionPool dbConnectionPool;
+    private CleaningJob cleaningJob;
+    final private int CLEANUP_INTERVAL_SEC = 30;
 
     public KVStore() {
         try {
             dbConnectionPool = new DBConnectionPool(DB_URL, DB_USER, DB_PASS, POOL_SIZE);
+            cleaningJob =new CleaningJob(DB_URL, DB_USER, DB_PASS, CLEANUP_INTERVAL_SEC);
+            cleaningJob.start();
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -84,10 +88,12 @@ public class KVStore {
 
         try {
             String query = "UPDATE kvstore SET expiry = null" +
-                    " WHERE key=" + key + " and expiry > now()";
+                    " WHERE key = ? and expiry > now()";
 
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(query);
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, key);
+
+            preparedStatement.executeUpdate();
         }
         catch(SQLException e) {
             e.printStackTrace();
@@ -96,6 +102,4 @@ public class KVStore {
             dbConnectionPool.returnConnection(connection);
         }
     }
-
-
 }
