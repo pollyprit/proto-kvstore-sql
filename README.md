@@ -1,5 +1,5 @@
 ##### KV Store with storage engine as SQL database.
-![K-V Store](design.jpg)
+![K-V Store](design.png)
 
 
 Operations:
