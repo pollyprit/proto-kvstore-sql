@@ -1,4 +1,6 @@
 ##### KV Store with storage engine as SQL database.
+![K-V Store](design.jpg)
+
 
 Operations:
 1) PUT (K, V, TTL)
